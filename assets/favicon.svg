@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="LiteRaceSegNet boundary icon">
+  <defs>
+    <linearGradient id="bg" x1="7" y1="8" x2="58" y2="57" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563eb"/>
+      <stop offset="0.52" stop-color="#0ea5e9"/>
+      <stop offset="1" stop-color="#14b8a6"/>
+    </linearGradient>
+    <linearGradient id="line" x1="17" y1="12" x2="46" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dffaff"/>
+    </linearGradient>
+  </defs>
+  <rect x="5" y="5" width="54" height="54" rx="18" fill="url(#bg)"/>
+  <path d="M18 52c8-10 11-20 12-39" fill="none" stroke="url(#line)" stroke-width="5.2" stroke-linecap="round"/>
+  <path d="M45 52c-7-11-10-21-11-39" fill="none" stroke="#dffaff" stroke-width="5.2" stroke-linecap="round" opacity=".92"/>
+  <path d="M22 35c5-3 9-3 14 0 4 2 7 2 10-1" fill="none" stroke="#071527" stroke-width="3" stroke-linecap="round" opacity=".34"/>
+  <circle cx="31" cy="35" r="3.2" fill="#ffffff" opacity=".96"/>
+  <circle cx="41" cy="32" r="2.2" fill="#ffffff" opacity=".76"/>
+</svg>

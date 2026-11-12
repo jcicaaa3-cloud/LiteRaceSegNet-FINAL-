@@ -1,0 +1,11 @@
+image_key,gt_file,gt_area_ratio,gt_positive_pixels,gt_components,largest_component_pixels,area_group,fragmentation_flag,small_thr_used,large_thr_used,interpretation_interpretation note
+newval_001,aws_runs/v13-g6-result-001/dataset_processed/val/masks/newval_001.png,0.3232828776041667,63560,5235,52880,large_or_easy_candidate,fragmented,0.23922719,0.25357656,"area_group is based on GT mask statistics"
+newval_002,aws_runs/v13-g6-result-001/dataset_processed/val/masks/newval_002.png,0.2803700764973958,55123,5592,45208,large_or_easy_candidate,fragmented,0.23922719,0.25357656,"area_group is based on GT mask statistics"
+newval_003,aws_runs/v13-g6-result-001/dataset_processed/val/masks/newval_003.png,0.2507222493489583,49294,5447,38526,medium,fragmented,0.23922719,0.25357656,"area_group is based on GT mask statistics"
+newval_004,aws_runs/v13-g6-result-001/dataset_processed/val/masks/newval_004.png,0.23947652180989584,47083,6079,35818,medium,fragmented,0.23922719,0.25357656,"area_group is based on GT mask statistics"
+newval_005,aws_runs/v13-g6-result-001/dataset_processed/val/masks/newval_005.png,0.2967376708984375,58341,5618,48310,large_or_easy_candidate,fragmented,0.23922719,0.25357656,"area_group is based on GT mask statistics"
+newval_006,aws_runs/v13-g6-result-001/dataset_processed/val/masks/newval_006.png,0.21318562825520834,41914,5666,33173,small_or_hard_candidate,fragmented,0.23922719,0.25357656,"area_group is based on GT mask statistics"
+newval_007,aws_runs/v13-g6-result-001/dataset_processed/val/masks/newval_007.png,0.23116556803385416,45449,6064,36006,small_or_hard_candidate,fragmented,0.23922719,0.25357656,"area_group is based on GT mask statistics"
+newval_008,aws_runs/v13-g6-result-001/dataset_processed/val/masks/newval_008.png,0.23967488606770834,47122,5800,37606,medium,fragmented,0.23922719,0.25357656,"area_group is based on GT mask statistics"
+newval_009,aws_runs/v13-g6-result-001/dataset_processed/val/masks/newval_009.png,0.19776407877604166,38882,6504,28892,small_or_hard_candidate,fragmented,0.23922719,0.25357656,"area_group is based on GT mask statistics"
+newval_010,aws_runs/v13-g6-result-001/dataset_processed/val/masks/newval_010.png,0.2537587483723958,49891,6225,40100,large_or_easy_candidate,fragmented,0.23922719,0.25357656,"area_group is based on GT mask statistics"

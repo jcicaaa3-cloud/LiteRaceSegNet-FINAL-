@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this project for academic reference, please cite it as below."
+title: "LiteRaceSegNet: Lightweight Boundary-Guided Road-Damage Segmentation"
+authors:
+  - name: "jcicaaa3"
+year: 2026
+repository-code: "https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-"
+license: "portfolio-viewing-only"
+keywords:
+  - semantic segmentation
+  - road damage
+  - lightweight cnn
+  - boundary-aware segmentation
+  - edge ai

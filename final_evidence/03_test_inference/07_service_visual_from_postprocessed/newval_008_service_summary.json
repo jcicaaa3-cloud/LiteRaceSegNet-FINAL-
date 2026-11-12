@@ -1,0 +1,56 @@
+{
+  "image": "aws_runs/v13-g6-result-001/dataset_processed/test/images/newval_008.jpg",
+  "mode": "model_prediction_postprocessed_strict",
+  "input_mask": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/04_postprocessed_masks/newval_008_post_thr0.75_min30.png",
+  "damage_pixels": 24847,
+  "raw_damage_pixels_before_postprocess": 24847,
+  "removed_noise_pixels": 0,
+  "image_pixels": 196608,
+  "area_basis": "full_image_pixels",
+  "damage_ratio": 0.12637837727864584,
+  "damage_ratio_percent": 12.6378,
+  "severity": "high",
+  "component_count": 2,
+  "components_top10": [
+    {
+      "id": 1,
+      "area_pixels_est": 24353,
+      "bbox_xywh": [
+        128,
+        205,
+        297,
+        113
+      ],
+      "centroid_xy": [
+        277.7,
+        257.7
+      ]
+    },
+    {
+      "id": 2,
+      "area_pixels_est": 236,
+      "bbox_xywh": [
+        108,
+        236,
+        15,
+        20
+      ],
+      "centroid_xy": [
+        112.6,
+        242.3
+      ]
+    }
+  ],
+  "recommendation": "Prioritize urgent inspection and repair review.",
+  "outputs": {
+    "mask": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_008_service_mask.png",
+    "overlay": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_008_service_overlay.png",
+    "boundary": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_008_service_boundary.png",
+    "service_card": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_008_service_card.png",
+    "summary_csv": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_008_service_summary.csv"
+  },
+  "elapsed_ms": 23.73,
+  "disclaimer": "mock_demo_not_model_result is for proposal visualization only. Use prediction_mask mode for real model output visualization.",
+  "llm_role_note": "CV model or CV heuristic creates the mask and measurements; an optional LLM only verbalizes this summary when connected.",
+  "auto_explanation_en": "The detected damage candidate covers about 12.64% of the full image and is classified as high severity under the service-view rule. The main connected components are estimated as 2. Inspection and repair review is prioritized."
+}

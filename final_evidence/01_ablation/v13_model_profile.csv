@@ -1,0 +1,8 @@
+variant,config,device,image_h,image_w,params_total,params_trainable,params_million,latency_ms_per_image,status,description
+v13_full_reference,aws_runs/v13-g6-result-001/configs/v13_ablation/v13_full_reference.yaml,cuda,256,384,124509,124509,0.124509,3.097,ok,Full LiteRaceSegNet reference: detail branch + boundary gate + boundary-logit fusion + LiteASPP context.
+v13_no_aux_loss,aws_runs/v13-g6-result-001/configs/v13_ablation/v13_no_aux_loss.yaml,cuda,256,384,124411,124411,0.124411,3.0289,ok,Disable auxiliary segmentation head/loss.
+v13_no_boundary_gate,aws_runs/v13-g6-result-001/configs/v13_ablation/v13_no_boundary_gate.yaml,cuda,256,384,124509,124509,0.124509,3.0544,ok,Keep boundary prediction but disable boundary-guided gating.
+v13_no_boundary_logit_fusion,aws_runs/v13-g6-result-001/configs/v13_ablation/v13_no_boundary_logit_fusion.yaml,cuda,256,384,124509,124509,0.124509,3.1127,ok,Predict boundary logit without concatenating it into the fusion module.
+v13_no_detail_branch,aws_runs/v13-g6-result-001/configs/v13_ablation/v13_no_detail_branch.yaml,cuda,256,384,124509,124509,0.124509,2.6676,ok,Remove the high-resolution detail branch contribution.
+v13_no_liteaspp_context,aws_runs/v13-g6-result-001/configs/v13_ablation/v13_no_liteaspp_context.yaml,cuda,256,384,123477,123477,0.123477,2.7642,ok,Replace LiteASPP context aggregation with DSConv context module.
+v13_slim_backbone_capacity,aws_runs/v13-g6-result-001/configs/v13_ablation/v13_slim_backbone_capacity.yaml,cuda,256,384,59397,59397,0.059397,3.1216,ok,Backbone-capacity ablation proxy: reduce base/context channels instead of claiming literal backbone removal.

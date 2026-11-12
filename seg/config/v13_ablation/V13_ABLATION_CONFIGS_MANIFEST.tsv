@@ -1,0 +1,8 @@
+variant	config_path	description
+v13_full_reference	seg/config/v13_ablation/v13_full_reference.yaml	Full LiteRaceSegNet reference: detail branch + boundary gate + boundary-logit fusion + LiteASPP context.
+v13_no_detail_branch	seg/config/v13_ablation/v13_no_detail_branch.yaml	Remove the high-resolution detail branch contribution.
+v13_no_boundary_gate	seg/config/v13_ablation/v13_no_boundary_gate.yaml	Keep boundary prediction but disable boundary-guided gating.
+v13_no_boundary_logit_fusion	seg/config/v13_ablation/v13_no_boundary_logit_fusion.yaml	Predict boundary logit without concatenating it into the fusion module.
+v13_no_liteaspp_context	seg/config/v13_ablation/v13_no_liteaspp_context.yaml	Replace LiteASPP context aggregation with DSConv context module.
+v13_no_aux_loss	seg/config/v13_ablation/v13_no_aux_loss.yaml	Disable auxiliary segmentation head/loss.
+v13_slim_backbone_capacity	seg/config/v13_ablation/v13_slim_backbone_capacity.yaml	Backbone-capacity ablation proxy: reduce base/context channels instead of claiming literal backbone removal.

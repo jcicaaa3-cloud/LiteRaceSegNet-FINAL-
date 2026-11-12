@@ -1,0 +1,38 @@
+{
+  "patches": 2560,
+  "aggregate": {
+    "tp": 278217,
+    "tn": 5687441,
+    "fp": 35642,
+    "fn": 552300,
+    "iou_damage": 0.321208,
+    "dice_damage": 0.486234,
+    "precision": 0.886439,
+    "recall": 0.334993
+  },
+  "by_patch_size": {
+    "32": {
+      "tp": 35210,
+      "tn": 1158029,
+      "fp": 9066,
+      "fn": 108415,
+      "iou_damage": 0.230596,
+      "dice_damage": 0.374772,
+      "precision": 0.795239,
+      "recall": 0.245152,
+      "patches": 1280
+    },
+    "64": {
+      "tp": 243007,
+      "tn": 4529412,
+      "fp": 26576,
+      "fn": 443885,
+      "iou_damage": 0.3406,
+      "dice_damage": 0.50813,
+      "precision": 0.901418,
+      "recall": 0.353778,
+      "patches": 1280
+    }
+  },
+  "unmatched_predictions": []
+}

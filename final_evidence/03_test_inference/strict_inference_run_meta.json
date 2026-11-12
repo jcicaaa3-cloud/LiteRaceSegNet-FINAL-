@@ -1,0 +1,7 @@
+{
+  "config": "aws_runs/v13-g6-result-001/configs/v13_ablation/v13_full_reference.yaml",
+  "checkpoint": "aws_runs/v13-g6-result-001/checkpoints/ablation/v13_full_reference/best.pth",
+  "threshold": 0.75,
+  "min_area_pixels": 30,
+  "note": "No mock/fallback mask was used. Raw/threshold/postprocessed outputs are saved separately."
+}

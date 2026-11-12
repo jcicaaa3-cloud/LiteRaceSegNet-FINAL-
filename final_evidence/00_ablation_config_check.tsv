@@ -1,0 +1,8 @@
+variant	use_detail_branch	use_boundary_gate	fuse_boundary_logit	context_module	use_aux	base_channels	context_channels	epochs	train_batch	val_batch	save_dir
+v13_full_reference	True	True	True	lite_aspp	True	24	96	60	4	2	aws_runs/v13-g6-result-001/checkpoints/ablation/v13_full_reference
+v13_no_detail_branch	False	True	True	lite_aspp	True	24	96	60	4	2	aws_runs/v13-g6-result-001/checkpoints/ablation/v13_no_detail_branch
+v13_no_boundary_gate	True	False	True	lite_aspp	True	24	96	60	4	2	aws_runs/v13-g6-result-001/checkpoints/ablation/v13_no_boundary_gate
+v13_no_boundary_logit_fusion	True	True	False	lite_aspp	True	24	96	60	4	2	aws_runs/v13-g6-result-001/checkpoints/ablation/v13_no_boundary_logit_fusion
+v13_no_liteaspp_context	True	True	True	dsconv	True	24	96	60	4	2	aws_runs/v13-g6-result-001/checkpoints/ablation/v13_no_liteaspp_context
+v13_no_aux_loss	True	True	True	lite_aspp	False	24	96	60	4	2	aws_runs/v13-g6-result-001/checkpoints/ablation/v13_no_aux_loss
+v13_slim_backbone_capacity	True	True	True	lite_aspp	True	16	64	60	4	2	aws_runs/v13-g6-result-001/checkpoints/ablation/v13_slim_backbone_capacity

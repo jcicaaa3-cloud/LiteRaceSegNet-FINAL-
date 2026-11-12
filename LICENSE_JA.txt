@@ -1,0 +1,7 @@
+Copyright (c) 2026 jcicaaa3
+
+This repository is public for portfolio viewing and academic demonstration only. It is not released as a permissive open-source license.
+
+Unauthorized copying, redistribution, modification, public reposting, derivative works, or commercial use of LiteRaceSegNet-related code, documentation, diagrams, experiment records, configuration files, and assets is not permitted without prior permission from the author.
+
+Third-party libraries, frameworks, datasets, and model implementations remain governed by their original licenses.

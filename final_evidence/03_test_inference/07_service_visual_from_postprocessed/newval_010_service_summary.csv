@@ -1,0 +1,2 @@
+image,mode,damage_ratio_percent,severity,component_count,recommendation,auto_explanation_ko,overlay,service_card
+aws_runs/v13-g6-result-001/dataset_processed/test/images/newval_010.jpg,model_prediction_postprocessed_strict,16.9184,high,1,Prioritize urgent inspection and repair review.,,aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_010_service_overlay.png,aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_010_service_card.png

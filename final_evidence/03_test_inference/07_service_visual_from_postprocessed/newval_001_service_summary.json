@@ -1,0 +1,42 @@
+{
+  "image": "aws_runs/v13-g6-result-001/dataset_processed/test/images/newval_001.jpg",
+  "mode": "model_prediction_postprocessed_strict",
+  "input_mask": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/04_postprocessed_masks/newval_001_post_thr0.75_min30.png",
+  "damage_pixels": 43466,
+  "raw_damage_pixels_before_postprocess": 43466,
+  "removed_noise_pixels": 0,
+  "image_pixels": 196608,
+  "area_basis": "full_image_pixels",
+  "damage_ratio": 0.22107950846354166,
+  "damage_ratio_percent": 22.108,
+  "severity": "high",
+  "component_count": 1,
+  "components_top10": [
+    {
+      "id": 1,
+      "area_pixels_est": 43490,
+      "bbox_xywh": [
+        72,
+        169,
+        369,
+        159
+      ],
+      "centroid_xy": [
+        251.1,
+        246.7
+      ]
+    }
+  ],
+  "recommendation": "Prioritize urgent inspection and repair review.",
+  "outputs": {
+    "mask": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_001_service_mask.png",
+    "overlay": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_001_service_overlay.png",
+    "boundary": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_001_service_boundary.png",
+    "service_card": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_001_service_card.png",
+    "summary_csv": "aws_runs/v13-g6-result-001/final_evidence/03_test_inference/07_service_visual_from_postprocessed/newval_001_service_summary.csv"
+  },
+  "elapsed_ms": 40.33,
+  "disclaimer": "mock_demo_not_model_result is for proposal visualization only. Use prediction_mask mode for real model output visualization.",
+  "llm_role_note": "CV model or CV heuristic creates the mask and measurements; an optional LLM only verbalizes this summary when connected.",
+  "auto_explanation_en": "The detected damage candidate covers about 22.11% of the full image and is classified as high severity under the service-view rule. The main connected components are estimated as 1. Inspection and repair review is prioritized."
+}

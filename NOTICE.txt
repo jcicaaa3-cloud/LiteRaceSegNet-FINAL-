@@ -1,0 +1,1 @@
+LiteRaceSegNet-V13 evidence portal package. Private datasets, checkpoints, pretrained weights, credentials, and manuscript files are outside this package.

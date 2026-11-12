@@ -1,0 +1,10 @@
+LiteRaceSegNet threshold sweep recommendation
+============================================
+
+[Metric-first setting]
+threshold=0.60, min_area_pixels=120, mIoU=0.807282, damageIoU=0.711291, precision=0.918315, recall=0.759334
+
+[Conservative inference setting]
+threshold=0.75, min_area_pixels=30, mIoU=0.800625, damageIoU=0.698373, precision=0.951095, recall=0.724386
+
+Use the metric-first setting for quantitative comparison and the conservative setting for service/demo masks. Report them separately and keep raw model evidence visible.

@@ -1,0 +1,42 @@
+{
+  "metric_first": {
+    "threshold": "0.60",
+    "min_area_pixels": "120",
+    "val_images": "10",
+    "miou_binary": "0.807282",
+    "iou_damage": "0.711291",
+    "iou_background": "0.903272",
+    "dice_damage": "0.831292",
+    "precision": "0.918315",
+    "recall": "0.759334",
+    "pixel_acc": "0.921887",
+    "pred_positive_ratio_percent": "20.956421",
+    "gt_positive_ratio_percent": "25.344035",
+    "false_positive_ratio_percent": "1.711833",
+    "avg_components_per_image": "1.100000",
+    "tp": "189182",
+    "fp": "16828",
+    "fn": "59960",
+    "tn": "717070"
+  },
+  "conservative": {
+    "threshold": "0.75",
+    "min_area_pixels": "30",
+    "val_images": "10",
+    "miou_binary": "0.800625",
+    "iou_damage": "0.698373",
+    "iou_background": "0.902878",
+    "dice_damage": "0.822403",
+    "precision": "0.951095",
+    "recall": "0.724386",
+    "pixel_acc": "0.920708",
+    "pred_positive_ratio_percent": "19.302877",
+    "gt_positive_ratio_percent": "25.344035",
+    "false_positive_ratio_percent": "0.944010",
+    "avg_components_per_image": "1.200000",
+    "tp": "180475",
+    "fp": "9280",
+    "fn": "68667",
+    "tn": "724618"
+  }
+}
