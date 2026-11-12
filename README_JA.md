@@ -1,65 +1,90 @@
-[![Repository views](https://hits.sh/github.com/jcicaaa3-cloud/LiteRaceSegNet-V13-Portal-Clean.svg?style=flat-square&label=repo%20views)](https://hits.sh/github.com/jcicaaa3-cloud/LiteRaceSegNet-V13-Portal-Clean/)
-[![Site visits](https://hits.sh/jcicaaa3-cloud.github.io/LiteRaceSegNet-V13-Portal-Clean.svg?style=flat-square&label=site%20visits)](https://hits.sh/jcicaaa3-cloud.github.io/LiteRaceSegNet-V13-Portal-Clean/)
+# LiteRaceSegNet
 
-# LiteRaceSegNet-V13 Research Portal
+[English](README.md) · [한국어](README_KO.md)
 
-LiteRaceSegNet-V13 は、AWS 実験結果を反映した GitHub Pages 用の研究ポートフォリオです。軽量 segmentation model の構造差、閾値、境界、case split を evidence として整理し、静的サイトで読みやすくまとめています。
+道路の損傷（ポットホール）を二値マスクとして切り出す小さなCNNです。フルモデルのパラメータ数は約0.125Mです。この大きさのモデルで、小さな損傷領域とその縁をどこまで残せるかを確かめたくて作りました。
 
-## V13 の主な更新
+結果の表と図：https://jcicaaa3-cloud.github.io/LiteRaceSegNet-FINAL-/
 
-- `final_evidence/` に AWS 実験結果を統合。
-- HTML の placeholder 表現を外し、測定済み結果を Evidence ページに反映。
-- `docs/assets/v13/` に service card / overlay / boundary sheet を追加。
-- QA Guide の会話を増やし、ablation、threshold、boundary-local metric、case split、limitation まで説明。
-- 静的ポートフォリオとして公開し、raw dataset、checkpoint、認証情報は配布物から分離。
+![テスト画像10枚の予測マスク](docs/assets/v13/service_overlays_sheet_10_samples.jpg)
 
-## 主要結果
+テスト画像10枚に予測マスクを重ねたものです。
 
-| 項目 | 結果 | 扱い |
-|---|---:|---|
-| Full model mIoU | 0.8072 | AWS validation protocol |
-| Full model damage IoU | 0.7113 | AWS validation protocol |
-| Parameters | 0.125M | model profile |
-| Latency | 3.097 ms/image | CUDA profile |
-| Ablation variants | 7 | same-protocol comparison |
-| Boundary-local aggregate IoU | 0.3212 | 32×32 / 64×64 patch |
-| Visual evaluation subset | 10 images | held-out preview/evaluation subset |
+## モデル
 
-## 結果パッケージの読み方
+コード：`seg/core/lightweight_race.py`
 
-V13 は、記録された AWS validation protocol に基づく研究記録です。数値表では構造差と閾値差を読み、10-image visual subset では mask、overlay、boundary の見え方を確認します。Boundary-local recall も改善余地として残しているため、単なるスコア表ではなく、次の改善点まで追える構成です。
+- MobileNetV2/V3風のステムとinverted residualブロック（このプロジェクト用に実装）
+- 高解像度の局所的な手がかりを保つdetailブランチと、軽量なASPP（LiteASPP）を持つcontextブランチ
+- 2つのブランチからエッジのロジットを予測する境界ヘッド。detailの特徴を`1 + sigmoid(edge)`でスケールし（boundary gate）、エッジのロジットをdetail・contextの特徴と連結してから最後の融合に渡します（boundary-logit fusion）
+- 学習時に使う補助ヘッドと補助損失
 
-## サイト構成
+## 結果
 
-- `index.html` — V13 overview と読み順。
-- `pages/evidence.html` — 7-variant ablation、threshold、boundary-local metrics、case split。
-- `pages/demo.html` — visual sheets と selected service cards。
-- `pages/qa-guide.html` — 研究レビュー用の対話形式ガイド。
-- `final_evidence/` — AWS run で生成した Markdown / CSV / PNG evidence。
-- `docs/assets/v13/` — GitHub Pages 用の visual assets。
+数値はすべて`final_evidence/`のものです。学習はAWSのGPUインスタンスで、変種ごとに1回、seedは42です。
 
-## GitHub Pages
+データ：学習2,400ペア、検証10ペア、テスト10枚。データセット、チェックポイント、重みはこのリポジトリに含めていません。
 
-root deployment を使います。
+### フルモデル
 
-```text
-Settings -> Pages -> Deploy from a branch -> main -> /root
+| 項目 | 値 |
+| --- | ---: |
+| 検証 mIoU（10枚） | 0.8072 |
+| 検証 損傷IoU | 0.7113 |
+| パラメータ数 | 0.1245M |
+| レイテンシ（CUDA、入力256×384） | 3.10 ms/枚 |
+| テスト 損傷IoU（10枚） | 0.6623 |
+| テスト Dice | 0.7951 |
+| テスト precision / recall | 0.963 / 0.681 |
+| テスト 境界F1 | 0.058 |
+| 正解の境界に沿った32px・64pxパッチでのIoU（2,560パッチ） | 0.321 |
+
+### アブレーション
+
+要素を1つずつ外したときの検証mIoUです。
+
+| 変種 | mIoU | Δ mIoU | パラメータ (M) | レイテンシ (ms) |
+| --- | ---: | ---: | ---: | ---: |
+| フルモデル | 0.8072 | — | 0.1245 | 3.10 |
+| detailブランチなし | 0.7982 | −0.0090 | 0.1245 | 2.67 |
+| boundary gateなし | 0.8010 | −0.0063 | 0.1245 | 3.05 |
+| boundary-logit fusionなし | 0.8046 | −0.0026 | 0.1245 | 3.11 |
+| LiteASPPをdepthwise separable convに置換 | 0.7850 | −0.0222 | 0.1235 | 2.76 |
+| 補助ヘッド・補助損失なし | 0.7919 | −0.0153 | 0.1244 | 3.03 |
+| スリムなバックボーン | 0.8064 | −0.0008 | 0.0594 | 3.12 |
+
+### 数値の読み方
+
+- 検証セットは10枚で、各変種の学習は1回だけです。boundary-logit fusionの0.003のような小さな差は、実際の効果として読むべきではありません。大きく下がるのはLiteASPPと補助損失を外したときです。
+- スリムなバックボーンはパラメータが半分以下（0.059M）で、mIoUはほぼ同じです。
+- モデルは損傷領域を見つけますが、縁の多くを落とします。テスト画像ではprecisionが0.96、recallが0.68、境界F1が0.058で、境界パッチ内のrecallは0.33です。
+- 使ったしきい値は0.60、最小面積120pxです（検証でprecision 0.918、recall 0.759）。より厳しい0.75・30pxでは0.951と0.724になります。
+
+比較用のベースラインとして、SegFormer-B3の学習スクリプトを`seg/transformer_b3/`に入れています。その結果はこのリポジトリには記録していません。
+
+## 実行
+
+```bash
+pip install -r requirements.txt
+python scripts/smoke_check_literace.py                      # モデルを作って順伝播を1回実行
+python seg/train_literace.py --config seg/config/pothole_binary_literace_train.yaml
+bash scripts/run_v13_ablation_matrix.sh                     # 7つの変種を学習して要約を出力
 ```
 
-## 公開範囲
+学習には、`datasets/pothole_binary/README_DATASET_LAYOUT.md`のとおりに配置した自分の画像とマスクのペアが必要です。ルートにある`.bat`ファイルは、同じ手順をWindowsで実行します。
 
-含めるもの: source code、static pages、public diagrams、summary tables、selected result visualizations、evidence CSV/Markdown files。
+## 構成
 
-配布物から分離するもの: raw private datasets、checkpoints、pretrained weights、API keys、`.pem` files、`.env`、cloud credentials、personal environment files。
+```text
+seg/core/            モデル、データ読み込み、学習ユーティリティ
+seg/config/          学習設定。v13_ablation/に7つの変種
+seg/tools/           プロファイル、アブレーションの要約、境界指標
+scripts/             スモークチェック、アブレーションと結果生成のパイプライン
+final_evidence/      記録した結果：アブレーション、しきい値、テスト推論、指標、ケース分類
+index.html, pages/   静的サイト
+docs/                評価手順、データセットに関するメモ（日本語）
+```
 
-## モデルと baseline の位置づけ
+## ライセンス
 
-LiteRaceSegNet-V13 は、`seg/core/lightweight_race.py` に実装した custom LiteIR-style lightweight CNN を中心に構成しています。LiteIRBlock は MobileNetV2/V3-style inverted-residual の軽量化アイデアを背景にしつつ、detail/context branch、LiteASPP、boundary-guided fusion、auxiliary output を道路損傷 segmentation 向けに組み合わせています。
-
-SegFormer-B3 は Transformer comparison baseline として別経路に置いています。関連 script は `seg/transformer_b3/` と `02_SETUP_SEGFORMER_B3_HF.bat` にあり、pretrained weight、fine-tuned checkpoint、Hugging Face cache、private dataset、credentials は public zip とは分けて扱います。
-
-短い説明:
-
-> LiteRaceSegNet は custom LiteIR-style lightweight CNN segmentation model です。SegFormer-B3 は比較用の別 baseline です。
-
-Third-party note: SegFormer の NVLabs reference materials は research/evaluation reference として扱い、Hugging Face `nvidia/segformer-b3-finetuned-ade-512-512` は表示されている `other` license の扱いを確認対象にします。TorchVision は BSD-3-Clause、Hugging Face Transformers は Apache 2.0 として整理しています。
+オープンソースライセンスではありません。コードと文書は閲覧と学術的な参照のためだけに公開しています。[LICENSE](LICENSE)を見てください。第三者のコンポーネントはそれぞれのライセンスに従います（[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)）。

@@ -9,7 +9,7 @@
   const CONFIG = {
     namespace: 'literacesegnet-v13-portal-clean',
     endpoint: 'https://api.counterapi.dev/v1',
-    repoUrl: 'https://github.com/jcicaaa3-cloud/LiteRaceSegNet-V13-Portal-Clean',
+    repoUrl: 'https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-',
     storagePrefix: 'lrs-v13-clean-traffic-v2',
     timeoutMs: 7500
   };
@@ -226,7 +226,7 @@
       if(!link) return;
       let href = '';
       try{ href = new URL(link.getAttribute('href'), location.href).href; }catch(_){ return; }
-      if(!/https?:\/\/github\.com\/jcicaaa3-cloud\/LiteRaceSegNet-V13-Portal-Clean\/?/i.test(href)) return;
+      if(!/https?:\/\/github\.com\/jcicaaa3-cloud\/LiteRaceSegNet-FINAL-\/?/i.test(href)) return;
       const localGithub = storeIncrement('local-github-clicks');
       if(STATE.mode !== 'global'){
         STATE.values.github = localGithub;
