@@ -11,13 +11,32 @@
 </head>
 <body>
 
-<header>
-<h1>LiteRaceSegNet</h1>
-<p>道路の損傷（ポットホール）を二値マスクとして切り出す小さなCNNです。フルモデルのパラメータ数は約0.125Mです。この大きさのモデルで、小さな損傷領域とその縁をどこまで残せるかを確かめたくて作りました。</p>
-<p class="links"><a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-">GitHub</a> · 日本語 · <a href="ko/">한국어</a> · <a href="en/">English</a></p>
+<header class="site-header">
+<div class="bar">
+<a class="name" href="./">LiteRaceSegNet</a>
+<nav class="menu">
+<a href="#model">モデル</a>
+<a href="#results">結果</a>
+<a href="#samples">推論結果</a>
+<a href="#run">実行</a>
+<a href="#layout">構成</a>
+<a href="#license">ライセンス</a>
+<a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-">GitHub</a>
+</nav>
+<nav class="lang">
+<span aria-current="page">日本語</span>
+<a href="ko/" hreflang="ko">한국어</a>
+<a href="en/" hreflang="en">English</a>
+</nav>
+</div>
 </header>
 
 <main>
+
+<div class="intro">
+<h1>LiteRaceSegNet</h1>
+<p>道路の損傷（ポットホール）を二値マスクとして切り出す小さなCNNです。フルモデルのパラメータ数は約0.125Mです。この大きさのモデルで、小さな損傷領域とその縁をどこまで残せるかを確かめたくて作りました。</p>
+</div>
 
 <h2 id="model">モデル</h2>
 <p>コード：<a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/seg/core/lightweight_race.py"><code>seg/core/lightweight_race.py</code></a></p>
@@ -115,7 +134,7 @@
 <p>損傷の領域は見つけられていますが、縁はかなり取りこぼしています。</p>
 <p>比較用のベースラインとして、SegFormer-B3の学習スクリプトを<code>seg/transformer_b3/</code>に入れてあります。その結果はこのリポジトリには記録していません。</p>
 
-<h3>推論結果</h3>
+<h2 id="samples">推論結果</h2>
 <figure>
 <img src="docs/assets/v13/service_overlays_sheet_10_samples.jpg" alt="テスト画像10枚に予測マスクを重ねた図" width="1024" height="2076">
 <figcaption>テスト画像10枚に予測マスクを重ねたものです。しきい値0.75、最小面積30px。</figcaption>

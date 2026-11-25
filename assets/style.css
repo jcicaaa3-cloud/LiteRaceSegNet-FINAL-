@@ -11,7 +11,6 @@ body {
   line-height: 1.75;
 }
 
-header,
 main,
 footer {
   max-width: 46rem;
@@ -19,8 +18,76 @@ footer {
   padding: 0 1.25rem;
 }
 
-header {
-  padding-top: 3rem;
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 1.4rem;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.92rem;
+}
+
+.bar .name {
+  color: #1d1d1d;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.menu,
+.lang {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.9rem;
+}
+
+.lang {
+  margin-left: auto;
+  color: #888;
+}
+
+.menu a,
+.lang a {
+  color: #333;
+  text-decoration: none;
+}
+
+.menu a:hover,
+.lang a:hover {
+  text-decoration: underline;
+}
+
+.lang [aria-current] {
+  color: #1d1d1d;
+  font-weight: 700;
+}
+
+.intro {
+  padding-top: 2.5rem;
+}
+
+h2,
+h3 {
+  scroll-margin-top: 4rem;
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    position: static;
+  }
+
+  .lang {
+    margin-left: 0;
+  }
 }
 
 h1 {

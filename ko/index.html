@@ -11,13 +11,32 @@
 </head>
 <body>
 
-<header>
-<h1>LiteRaceSegNet</h1>
-<p>도로 손상(포트홀)을 이진 마스크로 분할하는 작은 CNN입니다. 전체 모델의 파라미터는 약 0.125M입니다. 이 크기의 모델로 작은 손상 영역과 그 가장자리를 어디까지 살릴 수 있는지 보려고 만들었습니다.</p>
-<p class="links"><a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-">GitHub</a> · <a href="../">日本語</a> · 한국어 · <a href="../en/">English</a></p>
+<header class="site-header">
+<div class="bar">
+<a class="name" href="./">LiteRaceSegNet</a>
+<nav class="menu">
+<a href="#model">모델</a>
+<a href="#results">결과</a>
+<a href="#samples">추론 결과</a>
+<a href="#run">실행</a>
+<a href="#layout">구성</a>
+<a href="#license">라이선스</a>
+<a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-">GitHub</a>
+</nav>
+<nav class="lang">
+<a href="../" hreflang="ja">日本語</a>
+<span aria-current="page">한국어</span>
+<a href="../en/" hreflang="en">English</a>
+</nav>
+</div>
 </header>
 
 <main>
+
+<div class="intro">
+<h1>LiteRaceSegNet</h1>
+<p>도로 손상(포트홀)을 이진 마스크로 분할하는 작은 CNN입니다. 전체 모델의 파라미터는 약 0.125M입니다. 이 크기의 모델로 작은 손상 영역과 그 가장자리를 어디까지 살릴 수 있는지 보려고 만들었습니다.</p>
+</div>
 
 <h2 id="model">모델</h2>
 <p>코드: <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/seg/core/lightweight_race.py"><code>seg/core/lightweight_race.py</code></a></p>
@@ -115,7 +134,7 @@
 <p>손상 영역은 찾지만 가장자리는 많이 놓칩니다.</p>
 <p>비교용 베이스라인으로 SegFormer-B3 학습 스크립트를 <code>seg/transformer_b3/</code>에 넣어 뒀습니다. 그 결과는 이 레포에 기록돼 있지 않습니다.</p>
 
-<h3>추론 결과</h3>
+<h2 id="samples">추론 결과</h2>
 <figure>
 <img src="../docs/assets/v13/service_overlays_sheet_10_samples.jpg" alt="테스트 이미지 10장에 예측 마스크를 겹친 그림" width="1024" height="2076">
 <figcaption>테스트 이미지 10장에 예측 마스크를 겹친 것입니다. 임계값 0.75, 최소 면적 30px.</figcaption>

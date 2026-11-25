@@ -11,13 +11,32 @@
 </head>
 <body>
 
-<header>
-<h1>LiteRaceSegNet</h1>
-<p>A small CNN that segments road damage (potholes) as a binary mask. The full model has about 0.125M parameters. I wanted to see how much of the small damage regions and their edges a model this size can keep.</p>
-<p class="links"><a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-">GitHub</a> · <a href="../">日本語</a> · <a href="../ko/">한국어</a> · English</p>
+<header class="site-header">
+<div class="bar">
+<a class="name" href="./">LiteRaceSegNet</a>
+<nav class="menu">
+<a href="#model">Model</a>
+<a href="#results">Results</a>
+<a href="#samples">Samples</a>
+<a href="#run">Run</a>
+<a href="#layout">Layout</a>
+<a href="#license">License</a>
+<a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-">GitHub</a>
+</nav>
+<nav class="lang">
+<a href="../" hreflang="ja">日本語</a>
+<a href="../ko/" hreflang="ko">한국어</a>
+<span aria-current="page">English</span>
+</nav>
+</div>
 </header>
 
 <main>
+
+<div class="intro">
+<h1>LiteRaceSegNet</h1>
+<p>A small CNN that segments road damage (potholes) as a binary mask. The full model has about 0.125M parameters. I wanted to see how much of the small damage regions and their edges a model this size can keep.</p>
+</div>
 
 <h2 id="model">Model</h2>
 <p>Code: <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/seg/core/lightweight_race.py"><code>seg/core/lightweight_race.py</code></a></p>
@@ -115,7 +134,7 @@
 <p>The model finds the damaged area but loses much of its edge.</p>
 <p>SegFormer-B3 training scripts are included in <code>seg/transformer_b3/</code> as a comparison baseline. Its results are not recorded in this repository.</p>
 
-<h3>Inference output</h3>
+<h2 id="samples">Inference output</h2>
 <figure>
 <img src="../docs/assets/v13/service_overlays_sheet_10_samples.jpg" alt="Predicted masks overlaid on the 10 test images" width="1024" height="2076">
 <figcaption>Predicted masks overlaid on the 10 test images. Threshold 0.75, minimum area 30 px.</figcaption>
