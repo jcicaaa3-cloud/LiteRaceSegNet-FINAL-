@@ -81,7 +81,7 @@ seg/config/          学習設定。v13_ablation/に7つの変種
 seg/tools/           プロファイル、アブレーションの要約、境界指標
 scripts/             スモークチェック、アブレーションと結果生成のパイプライン
 final_evidence/      記録した結果：アブレーション、しきい値、テスト推論、指標、ケース分類
-index.html, pages/   静的サイト
+index.html, ko/, en/  静的サイト
 docs/                評価手順、データセットに関するメモ（日本語）
 ```
 

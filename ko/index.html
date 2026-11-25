@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiteRaceSegNet</title>
+<meta name="description" content="도로 포트홀을 픽셀 단위로 분할하는 작은 CNN. 파라미터 약 0.125M.">
+<link rel="alternate" hreflang="ja" href="../">
+<link rel="alternate" hreflang="en" href="../en/">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+<h1>LiteRaceSegNet</h1>
+<p>도로 손상(포트홀)을 이진 마스크로 분할하는 작은 CNN입니다. 전체 모델의 파라미터는 약 0.125M입니다. 이 크기의 모델로 작은 손상 영역과 그 가장자리를 어디까지 살릴 수 있는지 보려고 만들었습니다.</p>
+<p class="links"><a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-">GitHub</a> · <a href="../">日本語</a> · 한국어 · <a href="../en/">English</a></p>
+</header>
+
+<main>
+
+<h2 id="model">모델</h2>
+<p>코드: <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/seg/core/lightweight_race.py"><code>seg/core/lightweight_race.py</code></a></p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>단계</th><th>구성</th><th class="num">채널</th><th class="num">해상도</th></tr></thead>
+<tbody>
+<tr><td>stem</td><td>3×3 conv (stride 2) + depthwise separable conv</td><td class="num">24</td><td class="num">1/2</td></tr>
+<tr><td>detail</td><td>LiteIRBlock × 2</td><td class="num">24</td><td class="num">1/2</td></tr>
+<tr><td>down1</td><td>LiteIRBlock × 2 (stride 2)</td><td class="num">48</td><td class="num">1/4</td></tr>
+<tr><td>down2</td><td>LiteIRBlock × 2 (stride 2)</td><td class="num">96</td><td class="num">1/8</td></tr>
+<tr><td>context</td><td>LiteASPP (dilation 1, 2, 4 + global pooling)</td><td class="num">96</td><td class="num">1/8</td></tr>
+<tr><td>boundary head</td><td>detail과 context 피처로 에지 로짓 예측</td><td class="num">1</td><td class="num">1/2</td></tr>
+<tr><td>fuse</td><td>detail + context + 에지 로짓을 이어 붙여 융합</td><td class="num">96</td><td class="num">1/2</td></tr>
+<tr><td>head</td><td>1×1 conv 후 입력 크기로 업샘플</td><td class="num">2</td><td class="num">1</td></tr>
+<tr><td>aux head</td><td>down1 출력에 1×1 conv (학습 때만 사용)</td><td class="num">2</td><td class="num">1</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>LiteIRBlock은 MobileNetV2/V3의 inverted residual 블록을 이 프로젝트에 맞게 단순화해서 구현한 것입니다.</p>
+<p>boundary head는 detail 피처와 업샘플한 context 피처를 받아 에지 로짓을 예측합니다. detail 피처에는 <code>1 + sigmoid(edge)</code>를 곱하고(boundary gate), 에지 로짓은 한 채널로 마지막 융합에 같이 넣습니다(boundary-logit fusion).</p>
+
+<h3>학습 설정</h3>
+<div class="table-wrap">
+<table>
+<tbody>
+<tr><th>입력 크기</th><td>256 × 384</td></tr>
+<tr><th>배치 / 에폭</th><td>4 / 최대 60, patience 12로 조기 종료</td></tr>
+<tr><th>옵티마이저</th><td>AdamW, lr 3.2e-4, weight decay 2e-4, poly 스케줄</td></tr>
+<tr><th>손실</th><td>CE 1.0 + Dice 0.35 + 보조 0.2 + 경계 0.1</td></tr>
+<tr><th>데이터</th><td>학습 2,400쌍, 검증 10쌍, 테스트 10장</td></tr>
+<tr><th>환경</th><td>AWS GPU 인스턴스, AMP, seed 42</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small">설정 파일: <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/seg/config/v13_ablation/v13_full_reference.yaml"><code>seg/config/v13_ablation/v13_full_reference.yaml</code></a></p>
+
+<h2 id="results">결과</h2>
+<p>숫자는 전부 <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/tree/main/final_evidence"><code>final_evidence/</code></a>에 있는 값입니다. 변형마다 학습은 한 번씩 돌렸습니다.</p>
+
+<h3>Ablation (검증 10장)</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>변형</th><th class="num">mIoU</th><th class="num">손상 IoU</th><th class="num">Δ mIoU</th><th class="num">파라미터 (M)</th><th class="num">지연 (ms)</th><th class="num">best epoch</th></tr></thead>
+<tbody>
+<tr><td>전체 모델</td><td class="num">0.8072</td><td class="num">0.7113</td><td class="num">—</td><td class="num">0.1245</td><td class="num">3.10</td><td class="num">2</td></tr>
+<tr><td>detail 브랜치 제거</td><td class="num">0.7982</td><td class="num">0.6984</td><td class="num">−0.0090</td><td class="num">0.1245</td><td class="num">2.67</td><td class="num">2</td></tr>
+<tr><td>boundary gate 제거</td><td class="num">0.8010</td><td class="num">0.7023</td><td class="num">−0.0063</td><td class="num">0.1245</td><td class="num">3.05</td><td class="num">2</td></tr>
+<tr><td>boundary-logit fusion 제거</td><td class="num">0.8046</td><td class="num">0.7078</td><td class="num">−0.0026</td><td class="num">0.1245</td><td class="num">3.11</td><td class="num">2</td></tr>
+<tr><td>LiteASPP를 DSConv 2개로 교체</td><td class="num">0.7850</td><td class="num">0.6784</td><td class="num">−0.0222</td><td class="num">0.1235</td><td class="num">2.76</td><td class="num">2</td></tr>
+<tr><td>보조 헤드·손실 제거</td><td class="num">0.7919</td><td class="num">0.6866</td><td class="num">−0.0153</td><td class="num">0.1244</td><td class="num">3.03</td><td class="num">11</td></tr>
+<tr><td>슬림 백본 (채널 16 / 64)</td><td class="num">0.8064</td><td class="num">0.7095</td><td class="num">−0.0008</td><td class="num">0.0594</td><td class="num">3.12</td><td class="num">20</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small">지연 시간은 CUDA, 입력 256×384, 이미지 1장 기준입니다. 검증 임계값은 0.60입니다.</p>
+<p>검증 이미지가 10장이고 변형마다 한 번씩만 학습했기 때문에, boundary-logit fusion의 0.003 같은 작은 차이는 실제 효과로 보면 안 됩니다. 크게 떨어진 건 LiteASPP와 보조 손실을 뺐을 때입니다. 슬림 백본은 파라미터가 절반 이하인데 mIoU는 거의 같습니다.</p>
+
+<h3>임계값 (검증 10장)</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th class="num">임계값</th><th class="num">최소 면적</th><th class="num">mIoU</th><th class="num">손상 IoU</th><th class="num">Precision</th><th class="num">Recall</th></tr></thead>
+<tbody>
+<tr><td class="num">0.60</td><td class="num">120px</td><td class="num">0.8073</td><td class="num">0.7113</td><td class="num">0.918</td><td class="num">0.759</td></tr>
+<tr><td class="num">0.75</td><td class="num">30px</td><td class="num">0.8006</td><td class="num">0.6984</td><td class="num">0.951</td><td class="num">0.724</td></tr>
+</tbody>
+</table>
+</div>
+<p>정량 비교에는 0.60을, 테스트 추론과 아래 그림에는 0.75를 썼습니다.</p>
+
+<h3>테스트 (10장, 임계값 0.75)</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th class="num">손상 IoU</th><th class="num">Dice</th><th class="num">Precision</th><th class="num">Recall</th><th class="num">경계 F1</th></tr></thead>
+<tbody>
+<tr><td class="num">0.662</td><td class="num">0.795</td><td class="num">0.963</td><td class="num">0.681</td><td class="num">0.058</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>경계 주변 패치</h3>
+<p>정답 마스크의 경계 픽셀 위치에서 32×32, 64×64 패치를 1,280개씩 잘라 같은 지표를 다시 계산했습니다.</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>패치</th><th class="num">IoU</th><th class="num">Dice</th><th class="num">Precision</th><th class="num">Recall</th></tr></thead>
+<tbody>
+<tr><td>32×32</td><td class="num">0.231</td><td class="num">0.375</td><td class="num">0.795</td><td class="num">0.245</td></tr>
+<tr><td>64×64</td><td class="num">0.341</td><td class="num">0.508</td><td class="num">0.901</td><td class="num">0.354</td></tr>
+<tr><td>전체 2,560개</td><td class="num">0.321</td><td class="num">0.486</td><td class="num">0.886</td><td class="num">0.335</td></tr>
+</tbody>
+</table>
+</div>
+<p>손상 영역은 찾지만 가장자리는 많이 놓칩니다.</p>
+<p>비교용 베이스라인으로 SegFormer-B3 학습 스크립트를 <code>seg/transformer_b3/</code>에 넣어 뒀습니다. 그 결과는 이 레포에 기록돼 있지 않습니다.</p>
+
+<h3>추론 결과</h3>
+<figure>
+<img src="../docs/assets/v13/service_overlays_sheet_10_samples.jpg" alt="테스트 이미지 10장에 예측 마스크를 겹친 그림" width="1024" height="2076">
+<figcaption>테스트 이미지 10장에 예측 마스크를 겹친 것입니다. 임계값 0.75, 최소 면적 30px.</figcaption>
+</figure>
+<p><a href="../docs/assets/v13/service_boundaries_sheet_10_samples.jpg">경계선만 그린 버전</a> · <a href="../docs/assets/v13/service_cards_sheet_10_samples.jpg">요약 카드</a> · <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/tree/main/final_evidence/03_test_inference">원본 마스크와 후처리 마스크</a></p>
+<p>요약 카드는 <code>seg/infer_service_visual.py</code>가 마스크에서 손상 면적 비율과 영역 수를 계산해 만든 것입니다.</p>
+
+<h2 id="run">실행</h2>
+<pre>pip install -r requirements.txt
+python scripts/smoke_check_literace.py      # 모델 생성 후 순전파 1회
+python seg/train_literace.py --config seg/config/pothole_binary_literace_train.yaml
+bash scripts/run_v13_ablation_matrix.sh     # 변형 7개 학습 후 요약 출력</pre>
+<p>학습하려면 <code>datasets/pothole_binary/README_DATASET_LAYOUT.md</code>대로 배치한 이미지·마스크 쌍이 필요합니다. 루트의 <code>.bat</code> 파일은 같은 과정을 Windows에서 실행합니다.</p>
+
+<h2 id="layout">구성</h2>
+<pre>seg/core/          모델, 데이터 로딩, 학습 유틸
+seg/config/        학습 설정. v13_ablation/에 변형 7개
+seg/tools/         프로파일, ablation 요약, 경계 지표
+scripts/           스모크 체크, ablation·결과 생성 파이프라인
+final_evidence/    기록한 결과: ablation, 임계값, 테스트 추론, 지표, 케이스 분류
+index.html, ko/, en/   이 페이지</pre>
+
+<h2 id="license">라이선스</h2>
+<p>오픈소스 라이선스가 아닙니다. 코드와 문서는 열람과 학술 참고용으로만 공개합니다. 조건은 <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/LICENSE">LICENSE</a>에 있습니다. 데이터셋, 체크포인트, 학습된 가중치는 포함하지 않았습니다. 서드파티 구성 요소는 각자의 라이선스를 따릅니다(<a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>).</p>
+
+</main>
+
+<footer>
+<p>jcicaaa3 · 2026</p>
+</footer>
+
+</body>
+</html>

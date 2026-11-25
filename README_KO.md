@@ -81,7 +81,7 @@ seg/config/          학습 설정. v13_ablation/에 변형 7개
 seg/tools/           프로파일, ablation 요약, 경계 지표
 scripts/             스모크 체크, ablation·결과 생성 파이프라인
 final_evidence/      기록한 결과: ablation, 임계값, 테스트 추론, 지표, 케이스 분류
-index.html, pages/   정적 사이트
+index.html, ko/, en/  정적 사이트
 docs/                평가 절차, 데이터셋 메모(일본어)
 ```
 

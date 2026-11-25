@@ -81,7 +81,7 @@ seg/config/          training configs, v13_ablation/ for the 7 variants
 seg/tools/           profiling, ablation summary, boundary metrics
 scripts/             smoke check, ablation and evidence pipelines
 final_evidence/      recorded results: ablation, threshold, test inference, metrics, case split
-index.html, pages/   static site
+index.html, ko/, en/  static site
 docs/                evaluation protocol, dataset notes (Japanese)
 ```
 

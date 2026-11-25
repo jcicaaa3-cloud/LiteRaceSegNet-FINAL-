@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiteRaceSegNet</title>
+<meta name="description" content="A small CNN that segments potholes in road images. About 0.125M parameters.">
+<link rel="alternate" hreflang="ja" href="../">
+<link rel="alternate" hreflang="ko" href="../ko/">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+<h1>LiteRaceSegNet</h1>
+<p>A small CNN that segments road damage (potholes) as a binary mask. The full model has about 0.125M parameters. I wanted to see how much of the small damage regions and their edges a model this size can keep.</p>
+<p class="links"><a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-">GitHub</a> · <a href="../">日本語</a> · <a href="../ko/">한국어</a> · English</p>
+</header>
+
+<main>
+
+<h2 id="model">Model</h2>
+<p>Code: <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/seg/core/lightweight_race.py"><code>seg/core/lightweight_race.py</code></a></p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Stage</th><th>Layers</th><th class="num">Channels</th><th class="num">Scale</th></tr></thead>
+<tbody>
+<tr><td>stem</td><td>3×3 conv (stride 2) + depthwise separable conv</td><td class="num">24</td><td class="num">1/2</td></tr>
+<tr><td>detail</td><td>LiteIRBlock × 2</td><td class="num">24</td><td class="num">1/2</td></tr>
+<tr><td>down1</td><td>LiteIRBlock × 2 (stride 2)</td><td class="num">48</td><td class="num">1/4</td></tr>
+<tr><td>down2</td><td>LiteIRBlock × 2 (stride 2)</td><td class="num">96</td><td class="num">1/8</td></tr>
+<tr><td>context</td><td>LiteASPP (dilation 1, 2, 4 + global pooling)</td><td class="num">96</td><td class="num">1/8</td></tr>
+<tr><td>boundary head</td><td>edge logit from the detail and context features</td><td class="num">1</td><td class="num">1/2</td></tr>
+<tr><td>fuse</td><td>detail, context and edge logit concatenated and fused</td><td class="num">96</td><td class="num">1/2</td></tr>
+<tr><td>head</td><td>1×1 conv, then upsampled to the input size</td><td class="num">2</td><td class="num">1</td></tr>
+<tr><td>aux head</td><td>1×1 conv on the down1 output (training only)</td><td class="num">2</td><td class="num">1</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>LiteIRBlock is a simplified version of the MobileNetV2/V3 inverted-residual block, written for this project.</p>
+<p>The boundary head predicts an edge logit from the detail features and the upsampled context features. The detail features are multiplied by <code>1 + sigmoid(edge)</code> (boundary gate), and the edge logit goes into the final fusion as one extra channel (boundary-logit fusion).</p>
+
+<h3>Training setup</h3>
+<div class="table-wrap">
+<table>
+<tbody>
+<tr><th>Input size</th><td>256 × 384</td></tr>
+<tr><th>Batch / epochs</th><td>4 / up to 60, early stopping with patience 12</td></tr>
+<tr><th>Optimiser</th><td>AdamW, lr 3.2e-4, weight decay 2e-4, poly schedule</td></tr>
+<tr><th>Loss</th><td>CE 1.0 + Dice 0.35 + auxiliary 0.2 + boundary 0.1</td></tr>
+<tr><th>Data</th><td>2,400 training pairs, 10 validation pairs, 10 test images</td></tr>
+<tr><th>Hardware</th><td>AWS GPU instance, AMP, seed 42</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small">Config: <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/seg/config/v13_ablation/v13_full_reference.yaml"><code>seg/config/v13_ablation/v13_full_reference.yaml</code></a></p>
+
+<h2 id="results">Results</h2>
+<p>All numbers are from <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/tree/main/final_evidence"><code>final_evidence/</code></a>. Each variant was trained once.</p>
+
+<h3>Ablation (10 validation images)</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Variant</th><th class="num">mIoU</th><th class="num">Damage IoU</th><th class="num">Δ mIoU</th><th class="num">Params (M)</th><th class="num">Latency (ms)</th><th class="num">Best epoch</th></tr></thead>
+<tbody>
+<tr><td>Full model</td><td class="num">0.8072</td><td class="num">0.7113</td><td class="num">—</td><td class="num">0.1245</td><td class="num">3.10</td><td class="num">2</td></tr>
+<tr><td>No detail branch</td><td class="num">0.7982</td><td class="num">0.6984</td><td class="num">−0.0090</td><td class="num">0.1245</td><td class="num">2.67</td><td class="num">2</td></tr>
+<tr><td>No boundary gate</td><td class="num">0.8010</td><td class="num">0.7023</td><td class="num">−0.0063</td><td class="num">0.1245</td><td class="num">3.05</td><td class="num">2</td></tr>
+<tr><td>No boundary-logit fusion</td><td class="num">0.8046</td><td class="num">0.7078</td><td class="num">−0.0026</td><td class="num">0.1245</td><td class="num">3.11</td><td class="num">2</td></tr>
+<tr><td>LiteASPP replaced by two DSConv layers</td><td class="num">0.7850</td><td class="num">0.6784</td><td class="num">−0.0222</td><td class="num">0.1235</td><td class="num">2.76</td><td class="num">2</td></tr>
+<tr><td>No auxiliary head/loss</td><td class="num">0.7919</td><td class="num">0.6866</td><td class="num">−0.0153</td><td class="num">0.1244</td><td class="num">3.03</td><td class="num">11</td></tr>
+<tr><td>Slim backbone (16 / 64 channels)</td><td class="num">0.8064</td><td class="num">0.7095</td><td class="num">−0.0008</td><td class="num">0.0594</td><td class="num">3.12</td><td class="num">20</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small">Latency is per image on CUDA with a 256×384 input. Validation threshold 0.60.</p>
+<p>The validation set is 10 images and each variant was trained once, so small gaps such as the 0.003 for boundary-logit fusion should not be read as real effects. The larger drops come from removing LiteASPP and the auxiliary loss. The slim backbone has less than half the parameters and almost the same mIoU.</p>
+
+<h3>Threshold (10 validation images)</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th class="num">Threshold</th><th class="num">Min area</th><th class="num">mIoU</th><th class="num">Damage IoU</th><th class="num">Precision</th><th class="num">Recall</th></tr></thead>
+<tbody>
+<tr><td class="num">0.60</td><td class="num">120 px</td><td class="num">0.8073</td><td class="num">0.7113</td><td class="num">0.918</td><td class="num">0.759</td></tr>
+<tr><td class="num">0.75</td><td class="num">30 px</td><td class="num">0.8006</td><td class="num">0.6984</td><td class="num">0.951</td><td class="num">0.724</td></tr>
+</tbody>
+</table>
+</div>
+<p>0.60 is used for the quantitative comparison; the test inference and the figure below use 0.75.</p>
+
+<h3>Test (10 images, threshold 0.75)</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th class="num">Damage IoU</th><th class="num">Dice</th><th class="num">Precision</th><th class="num">Recall</th><th class="num">Boundary F1</th></tr></thead>
+<tbody>
+<tr><td class="num">0.662</td><td class="num">0.795</td><td class="num">0.963</td><td class="num">0.681</td><td class="num">0.058</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Patches along the boundary</h3>
+<p>1,280 patches each of 32×32 and 64×64 were cut at ground-truth boundary pixels, and the same metrics were computed inside them.</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Patch</th><th class="num">IoU</th><th class="num">Dice</th><th class="num">Precision</th><th class="num">Recall</th></tr></thead>
+<tbody>
+<tr><td>32×32</td><td class="num">0.231</td><td class="num">0.375</td><td class="num">0.795</td><td class="num">0.245</td></tr>
+<tr><td>64×64</td><td class="num">0.341</td><td class="num">0.508</td><td class="num">0.901</td><td class="num">0.354</td></tr>
+<tr><td>All 2,560</td><td class="num">0.321</td><td class="num">0.486</td><td class="num">0.886</td><td class="num">0.335</td></tr>
+</tbody>
+</table>
+</div>
+<p>The model finds the damaged area but loses much of its edge.</p>
+<p>SegFormer-B3 training scripts are included in <code>seg/transformer_b3/</code> as a comparison baseline. Its results are not recorded in this repository.</p>
+
+<h3>Inference output</h3>
+<figure>
+<img src="../docs/assets/v13/service_overlays_sheet_10_samples.jpg" alt="Predicted masks overlaid on the 10 test images" width="1024" height="2076">
+<figcaption>Predicted masks overlaid on the 10 test images. Threshold 0.75, minimum area 30 px.</figcaption>
+</figure>
+<p><a href="../docs/assets/v13/service_boundaries_sheet_10_samples.jpg">Boundary lines only</a> · <a href="../docs/assets/v13/service_cards_sheet_10_samples.jpg">Summary cards</a> · <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/tree/main/final_evidence/03_test_inference">Raw and post-processed masks</a></p>
+<p>The summary cards are made by <code>seg/infer_service_visual.py</code>, which computes the damaged-area ratio and the number of regions from each mask.</p>
+
+<h2 id="run">Run</h2>
+<pre>pip install -r requirements.txt
+python scripts/smoke_check_literace.py      # builds the model and runs a forward pass
+python seg/train_literace.py --config seg/config/pothole_binary_literace_train.yaml
+bash scripts/run_v13_ablation_matrix.sh     # trains the 7 variants and writes the summary</pre>
+<p>Training needs your own image and mask pairs laid out as described in <code>datasets/pothole_binary/README_DATASET_LAYOUT.md</code>. The <code>.bat</code> files in the root do the same steps on Windows.</p>
+
+<h2 id="layout">Layout</h2>
+<pre>seg/core/          model, data loading, training utilities
+seg/config/        training configs, v13_ablation/ for the 7 variants
+seg/tools/         profiling, ablation summary, boundary metrics
+scripts/           smoke check, ablation and evidence pipelines
+final_evidence/    recorded results: ablation, threshold, test inference, metrics, case split
+index.html, ko/, en/   this page</pre>
+
+<h2 id="license">License</h2>
+<p>Not an open-source license. The code and documents are public for viewing and academic reference only; see <a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/LICENSE">LICENSE</a>. The dataset, checkpoints and trained weights are not included. Third-party components keep their own licences (<a href="https://github.com/jcicaaa3-cloud/LiteRaceSegNet-FINAL-/blob/main/THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>).</p>
+
+</main>
+
+<footer>
+<p>jcicaaa3 · 2026</p>
+</footer>
+
+</body>
+</html>
